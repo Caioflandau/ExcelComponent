@@ -87,8 +87,16 @@ class ExcelComponent extends Component {
 	/**
 	 * Finds data in the file. Looks inside cells. Similar to CakePHP's Model::find() method, but returns an array of cell coordinates in which the value was found
 	 * 
+	 * Find conditions:
+	 * <pre>
+	 * array(
+	 * 	"text" => "some search" //What to look for. Regex syntax allowed.
+	 * 	"case_sensitive" => false //Should the search be case sensitive? Defaults to false (case-insensitive). If providing a regex for "text", this should always be "false".
+	 * )
+	 * </pre>
+	 * 
 	 * @param string $type Supports 'all', 'first' and 'count'
-	 * @param string|array $conditions The find conditions. Currently, only supports a string.
+	 * @param string|array $conditions The find conditions. See method description for details.
 	 * @param array $worksheets An array defining which worksheets to look in. Can be a numeric array (worksheet numbers) or string array (worksheet names). Defaults to all worksheets
 	 * 
 	 * @return array Coordinates on which the value was found
@@ -113,22 +121,47 @@ class ExcelComponent extends Component {
 		else {
 			$found = $this->findInAllSheets($type, $conditions);
 		}
-		//Retorna a folha ativa para a que era antes do find()
+		//Set active sheet back to what it was before find() was called
 		$this->getReader()->setActiveSheetIndex($active_sheet);
 		return $found;
 	}
 	
 	/**
 	 * Finds data in the active worksheet. Looks inside cells. Similar to CakePHP's Model::find() method, but returns an array of cell coordinates in which the value was found
+	 * 
+	 * Find conditions:
+	 * <pre>
+	 * array(
+	 * 	"text" => "some search" //What to look for
+	 * 	"case_sensitive" => false //Should the search be case sensitive? Defaults to false (case-insensitive). If providing a regex for "text", this should always be "false".
+	 * )
+	 * </pre>
+	 * 
 	 * @param string $type Supports 'all', 'first' and 'count' 
-	 * @param string|array $conditions The find conditions. Currently, only supports a string.
+	 * @param string|array $conditions The find conditions. See method description for details.
+	 * 
+	 * @return array Array of cell coordinates and text found
 	 */
 	public function findInActiveSheet($type, $conditions) {
 		$raw_data = $this->getReader()->getActiveSheet()->toArray(null, true, false, true);
 		$found = array();
+		if (isset($conditions['case_sensitive']) && $conditions['case_sensitive']) {
+			$cs = true;
+		}
+		else {
+			$cs = false;
+		}
 		foreach($raw_data as $rowNum => $row) {
 			foreach($row as $colCod => $cell) {
-				if (preg_match('/'.strtolower($conditions['text']).'/', strtolower($cell))) {
+				if ($cs) {
+					$text = $conditions['text'];
+					$cellVal = $cell;
+				}
+				else {
+					$text = strtolower($conditions['text']);
+					$cellVall = strtolower($cellVal);
+				}
+				if (preg_match('/'.$text.'/', $cellVal)) {
 					$found[] = array("row" => $rowNum, 'col' => $colCod, 'cell' => $cell);
 					if ($type == 'first')
 						return $found;
@@ -158,23 +191,27 @@ class ExcelComponent extends Component {
 	 * 	)
 	 *
 	 * For example, to extract each row as an entry and each column as a field:
+	 * <pre>
 	 * 	array(
 	 * 		"A" => "User.username", //Column A contains an User.username on each row
 	 * 		"B" => "User.password", //Column B contains an User.password on each row
 	 * 		"C" => "User.name" //Column C contains an User.name on each row
 	 * 	)
-	 * In this example, each row in the excel file represents a different User.
+	 * 
+	 * //In this example, each row in the excel file represents a different User.
+	 * </pre>
 	 *
 	 * -
 	 *
 	 * To use columns as entries and rows as fields:
+	 * <pre>
 	 * 	array(
 	 * 		1 => "User.username", //Row 1 contains an User.username on each column
 	 * 		2 => "User.password", //Row 2 contains an User.password on each column
 	 * 		3 => "User.name" //Row 3 contains an User.name on each column
 	 * 	)
-	 * In this example, each column in the excel file represents a different User.
-	 *
+	 * //In this example, each column in the excel file represents a different User.
+	 * </pre>
 	 *
 	 * @param array $format Format array defining how to convert rows and columns from the worksheet
 	 * @param string $range The range to get data from the worksheet. For example: 'A1:F10'. Defaults to entire worksheet
@@ -203,7 +240,7 @@ class ExcelComponent extends Component {
 	/**
 	 * Lazy loading the PHPExcel reader property.
 	 * Access this from outside ExcelComponent to get access to the raw PHPExcel object for the currently loaded file.
-	 *
+	 * 
 	 * @return PHPExcel reader
 	 */
 	public function getReader() {
@@ -219,6 +256,9 @@ class ExcelComponent extends Component {
 		return $this->reader;
 	}
 	
+	/**
+	 * @access private 
+	 */
 	private function findBySheetsName($type, $conditions, $worksheets) {
 		foreach($worksheets as $worksheet) {
 			$this->getReader()->setActiveSheetIndexByName($worksheet);
@@ -228,6 +268,9 @@ class ExcelComponent extends Component {
 		}
 		return $found;
 	}
+	/**
+	 * @access private
+	 */
 	private function findBySheetsNumber($type, $conditions, $worksheets) {
 		foreach($worksheets as $worksheet) {
 			$this->getReader()->setActiveSheetIndex($worksheet);
@@ -237,6 +280,9 @@ class ExcelComponent extends Component {
 		}
 		return $found;
 	}
+	/**
+	 * @access private
+	 */
 	private function findInAllSheets($type, $conditions) {
 		$allSheets = $this->getReader()->getAllSheets();
 		foreach($allSheets as $sheet) {
@@ -252,6 +298,8 @@ class ExcelComponent extends Component {
 	 * 
 	 * @param array $raw_array The raw array
 	 * @param array $format The format to convert
+	 * 
+	 * @access private
 	 */
 	private function rawArrayToDataArray($raw_array, $format) {
 		reset($format);
@@ -273,6 +321,8 @@ class ExcelComponent extends Component {
 	 * 
 	 * @param array $raw_array
 	 * @param array $format
+	 * 
+	 * @access private
 	 */
 	private function rowsToEntries($raw_array, $format) {
 		$cont = 0;
@@ -292,6 +342,8 @@ class ExcelComponent extends Component {
 	 *
 	 * @param array $raw_array
 	 * @param array $format
+	 * 
+	 * @access private
 	 */
 	private function columnsToEntries($raw_array, $format) {
 		$x = 0;
@@ -312,6 +364,9 @@ class ExcelComponent extends Component {
 		return $retorno;
 	}
 	
+	/**
+	 * @access private 
+	 */
 	private function dotNotationToDataArray($array) {
 		foreach($array as $x => $row) {
 			foreach($row as $field => $value) {

@@ -130,7 +130,7 @@ ExcelComponent is a PHPExcel wrapper for CakePHP with some helper methods.<br />
 
   <hr />
 	<a name="methodfind"></a>
-	<h3>method find <span class="smalllinenumber">[line 95]</span></h3>
+	<h3>method find <span class="smalllinenumber">[line 103]</span></h3>
 	<div class="function">
     <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
     <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
@@ -142,7 +142,10 @@ $worksheets = null])</code>
     </td></tr></table>
     </td></tr></table><br />
 	
-		Finds data in the file. Looks inside cells.<br /><br /><p>Similar to CakePHP's Model::find() method, but returns an array of cell coordinates in which the value was found</p><br /><br /><br />
+		Finds data in the file.<br /><br /><p>Looks inside cells. Similar to CakePHP's Model::find() method, but returns an array of cell coordinates in which the value was found</p><p>Find conditions: <pre>array(
+	"text" => "some search" //What to look for. Regex syntax allowed.
+	"case_sensitive" => false //Should the search be case sensitive? Defaults to false (case-insensitive). If providing a regex for "text", this should always be "false".
+)</pre></p><br /><br /><br />
 <h4>Tags:</h4>
 <div class="tags">
 <table border="0" cellspacing="0" cellpadding="0">
@@ -165,7 +168,7 @@ $worksheets = null])</code>
           <tr>
         <td class="type">string|array&nbsp;&nbsp;</td>
         <td><b>$conditions</b>&nbsp;&nbsp;</td>
-        <td>The find conditions. Currently, only supports a string.</td>
+        <td>The find conditions. See method description for details.</td>
       </tr>
           <tr>
         <td class="type">array&nbsp;&nbsp;</td>
@@ -178,7 +181,7 @@ $worksheets = null])</code>
   </div>
   <hr />
 	<a name="methodfindInActiveSheet"></a>
-	<h3>method findInActiveSheet <span class="smalllinenumber">[line 127]</span></h3>
+	<h3>method findInActiveSheet <span class="smalllinenumber">[line 144]</span></h3>
 	<div class="function">
     <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
     <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
@@ -189,7 +192,10 @@ $conditions)</code>
     </td></tr></table>
     </td></tr></table><br />
 	
-		Finds data in the active worksheet. Looks inside cells.<br /><br /><p>Similar to CakePHP's Model::find() method, but returns an array of cell coordinates in which the value was found</p><br /><br /><br />
+		Finds data in the active worksheet.<br /><br /><p>Looks inside cells. Similar to CakePHP's Model::find() method, but returns an array of cell coordinates in which the value was found</p><p>Find conditions: <pre>array(
+	"text" => "some search" //What to look for
+	"case_sensitive" => false //Should the search be case sensitive? Defaults to false (case-insensitive). If providing a regex for "text", this should always be "false".
+)</pre></p><br /><br /><br />
 <h4>Tags:</h4>
 <div class="tags">
 <table border="0" cellspacing="0" cellpadding="0">
@@ -212,7 +218,7 @@ $conditions)</code>
           <tr>
         <td class="type">string|array&nbsp;&nbsp;</td>
         <td><b>$conditions</b>&nbsp;&nbsp;</td>
-        <td>The find conditions. Currently, only supports a string.</td>
+        <td>The find conditions. See method description for details.</td>
       </tr>
         </table>
     </div><br />
@@ -281,7 +287,7 @@ $filePath)</code>
   </div>
   <hr />
 	<a name="methodgetReader"></a>
-	<h3>method getReader <span class="smalllinenumber">[line 216]</span></h3>
+	<h3>method getReader <span class="smalllinenumber">[line 245]</span></h3>
 	<div class="function">
     <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
     <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
@@ -375,7 +381,7 @@ $absolute = false])</code>
   </div>
   <hr />
 	<a name="methodtoDataArray"></a>
-	<h3>method toDataArray <span class="smalllinenumber">[line 192]</span></h3>
+	<h3>method toDataArray <span class="smalllinenumber">[line 221]</span></h3>
 	<div class="function">
     <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
     <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
@@ -387,7 +393,18 @@ $worksheet = null])</code>
     </td></tr></table>
     </td></tr></table><br />
 	
-		Converts a worksheet's rows and columns to a data array ready to be used for Model::save(), Model::create() or Model::set().<br /><br /><p>The format array should be in the format: 	array( 	    &quot;Row or Column&quot; =&gt; &quot;Model.field&quot; //See examples below 	)</p><p>-</p><p>For example, to extract each row as an entry and each column as a field: 	array( 		&quot;A&quot; =&gt; &quot;User.username&quot;, //Column A contains an User.username on each row 		&quot;B&quot; =&gt; &quot;User.password&quot;, //Column B contains an User.password on each row 		&quot;C&quot; =&gt; &quot;User.name&quot; //Column C contains an User.name on each row 	) In this example, each row in the excel file represents a different User.</p><p>-</p><p>To use columns as entries and rows as fields: 	array( <ol><li>=&gt; &quot;User.username&quot;, //Row 1 contains an User.username on each column</li><li>=&gt; &quot;User.password&quot;, //Row 2 contains an User.password on each column</li><li>=&gt; &quot;User.name&quot; //Row 3 contains an User.name on each column</li></ol>	) In this example, each column in the excel file represents a different User.</p><br /><br /><br />
+		Converts a worksheet's rows and columns to a data array ready to be used for Model::save(), Model::create() or Model::set().<br /><br /><p>The format array should be in the format: 	array( 	    &quot;Row or Column&quot; =&gt; &quot;Model.field&quot; //See examples below 	)</p><p>For example, to extract each row as an entry and each column as a field: <pre>	array(
+		"A" => "User.username", //Column A contains an User.username on each row
+		"B" => "User.password", //Column B contains an User.password on each row
+		"C" => "User.name" //Column C contains an User.name on each row
+	)
+
+//In this example, each row in the excel file represents a different User.</pre></p><p>-</p><p>To use columns as entries and rows as fields: <pre>	array(
+		1 => "User.username", //Row 1 contains an User.username on each column
+		2 => "User.password", //Row 2 contains an User.password on each column
+		3 => "User.name" //Row 3 contains an User.name on each column
+	)
+//In this example, each column in the excel file represents a different User.</pre></p><br /><br /><br />
 <h4>Tags:</h4>
 <div class="tags">
 <table border="0" cellspacing="0" cellpadding="0">
@@ -442,7 +459,7 @@ $worksheet = null])</code>
 
         <div class="credit">
 		    <hr />
-		    Documentation generated on Tue, 11 Sep 2012 13:48:29 -0300 by <a href="http://www.phpdoc.org">phpDocumentor 1.4.3</a>
+		    Documentation generated on Wed, 12 Sep 2012 11:33:34 -0300 by <a href="http://www.phpdoc.org">phpDocumentor 1.4.3</a>
 	      </div>
       </td></tr></table>
     </td>
