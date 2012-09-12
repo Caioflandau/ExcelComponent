@@ -9,7 +9,7 @@ Uses PHPExcel Library to proccess Microsoft Excel and CSV files.
 Installing  
 ==========
 
-1.  Install the latest version of PHPExcel in your app/Vendor folder in your CakePHP app, inside a PHPExcel folder.  
+1.  Install the latest version of PHPExcel in your app/Vendor folder in your CakePHP app, inside a PHPExcel folder. Tested with PHPExcel version 1.7.7, 2012-05-19  
 The Vendor folder should end up like this:  
 Vendor  
 ../ PHPExcel (folder)  
