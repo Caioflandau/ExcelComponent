@@ -17,8 +17,10 @@ Vendor
 ..../ PHPExcel.php  
   
 2.  Copy ExcelComponent.php class from this package's Controller/Component to your application's app/Controller/Component  
+
+3.  Copy everything from this package's Lib/Error to your application's app/Lib/Error
   
-3.  Include ExcelComponent in your $components attribute in the controller your want to use.
+4.  Include ExcelComponent in your $components attribute in the controller your want to use.
 ```php
 //Example:
 public $components = array("Excel");
