@@ -9,8 +9,11 @@
  * 
  */
 
+App::uses("ExcelException", "Lib/Error");
+
 class ExcelComponent extends Component {
 	const ERR_NO_FILE_LOADED = 'No file or invalid file loaded';
+	const ERR_INVALID_WORKSHEETS_ARRAY = 'Invalid worksheets array';
 	
 	private $workingFile = null;
 	
@@ -79,7 +82,7 @@ class ExcelComponent extends Component {
 			return $return;
 		}
 		else {
-			throw new Exception(ExcelComponent::ERR_NO_FILE_LOADED);
+			throw new ExcelException(ExcelComponent::ERR_NO_FILE_LOADED);
 			return false;
 		}
 	}
@@ -90,7 +93,7 @@ class ExcelComponent extends Component {
 	 * Find conditions:
 	 * <pre>
 	 * array(
-	 * 	"text" => "some search" //What to look for. Regex syntax allowed.
+	 * 	"text" => array("some search") //What to look for (string or an array of strings). If you provide an array of strings, it will search for ANY ocurrence. Regex syntax supported.
 	 * 	"case_sensitive" => false //Should the search be case sensitive? Defaults to false (case-insensitive). If providing a regex for "text", this should always be "false".
 	 * )
 	 * </pre>
@@ -104,7 +107,7 @@ class ExcelComponent extends Component {
 	public function find($type, $conditions, $worksheets = null) {
 		$active_sheet = $this->getReader()->getIndex($this->getReader()->getActiveSheet());
 		if ($this->getReader() == null) {
-			throw new Exception(ExcelComponent::ERR_NO_FILE_LOADED);
+			throw new ExcelException(ExcelComponent::ERR_NO_FILE_LOADED);
 			return false;
 		}
 		if ($worksheets != null) {
@@ -132,8 +135,8 @@ class ExcelComponent extends Component {
 	 * Find conditions:
 	 * <pre>
 	 * array(
-	 * 	"text" => "some search" //What to look for
-	 * 	"case_sensitive" => false //Should the search be case sensitive? Defaults to false (case-insensitive). If providing a regex for "text", this should always be "false".
+	 * 	"text" => array("some search"), //What to look for (string or an array of strings). If you provide an array of strings, it will search for ANY ocurrence. Regex syntax supported.
+	 * 	"case_sensitive" => false //Should the search be case sensitive? If providing a regex for "text", this should always be "false". Defaults to false (case-insensitive).
 	 * )
 	 * </pre>
 	 * 
@@ -145,6 +148,8 @@ class ExcelComponent extends Component {
 	public function findInActiveSheet($type, $conditions) {
 		$raw_data = $this->getReader()->getActiveSheet()->toArray(null, true, false, true);
 		$found = array();
+		if (!is_array($conditions['text']))
+			$conditions['text'] = array($conditions['text']);
 		if (isset($conditions['case_sensitive']) && $conditions['case_sensitive']) {
 			$cs = true;
 		}
@@ -153,18 +158,21 @@ class ExcelComponent extends Component {
 		}
 		foreach($raw_data as $rowNum => $row) {
 			foreach($row as $colCod => $cell) {
-				if ($cs) {
-					$text = $conditions['text'];
-					$cellVal = $cell;
-				}
-				else {
-					$text = strtolower($conditions['text']);
-					$cellVall = strtolower($cellVal);
-				}
-				if (preg_match('/'.$text.'/', $cellVal)) {
-					$found[] = array("row" => $rowNum, 'col' => $colCod, 'cell' => $cell);
-					if ($type == 'first')
-						return $found;
+				foreach($conditions['text'] as $condition) {
+					if ($cs) {
+						$text = $condition;
+						$cellVal = $cell;
+					}
+					else {
+						$text = strtolower($condition);
+						$cellVal = strtolower($cell);
+					}
+					if (preg_match('/'.$text.'/', $cellVal)) {
+						$found[] = array("row" => $rowNum, 'col' => $colCod, 'cell' => $cell);
+						if ($type == 'first')
+							return $found;
+						break;
+					}
 				}
 			}
 		}
@@ -245,14 +253,14 @@ class ExcelComponent extends Component {
 	 */
 	public function getReader() {
 		if(is_null($this->workingFile) || empty($this->workingFile)) {
-			throw new Exception(ExcelComponent::ERR_NO_FILE_LOADED);
+			throw new ExcelException(ExcelComponent::ERR_NO_FILE_LOADED);
 			return null;
 		}
 	
 		if (is_null($this->reader)) {
 			$this->reader = $this->getObjectForFile($this->workingFile);
 		}
-	
+
 		return $this->reader;
 	}
 	
@@ -377,6 +385,18 @@ class ExcelComponent extends Component {
 			}
 		}
 		return $retorno;
+	}
+	
+	/**
+	 * @access private
+	 */
+	private function validateWorksheetsArray($array) {
+		foreach($array as $worksheet) {
+			if (!is_numeric($worksheet)) {
+				throw new ExcelException(ExcelComponent::ERR_INVALID_WORKSHEETS_ARRAY);
+				return false;
+			}
+		}
 	}
 	
 }
