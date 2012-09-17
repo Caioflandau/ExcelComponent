@@ -136,7 +136,8 @@ class ExcelComponent extends Component {
 	 * <pre>
 	 * array(
 	 * 	"text" => array("some search"), //What to look for (string or an array of strings). If you provide an array of strings, it will search for ANY ocurrence. Regex syntax supported.
-	 * 	"case_sensitive" => false //Should the search be case sensitive? If providing a regex for "text", this should always be "false". Defaults to false (case-insensitive).
+	 * 	"case_sensitive" => false, //Should the search be case sensitive? If providing a regex for "text", this should always be "false". Defaults to false (case-insensitive).
+	 * 	"regex" => false //Are search strings in regex syntax? Defaults to false (no regex).
 	 * )
 	 * </pre>
 	 * 
@@ -150,6 +151,8 @@ class ExcelComponent extends Component {
 		$found = array();
 		if (!is_array($conditions['text']))
 			$conditions['text'] = array($conditions['text']);
+		if (!isset($conditions['regex']))
+			$conditions['regex'] = false;
 		if (isset($conditions['case_sensitive']) && $conditions['case_sensitive']) {
 			$cs = true;
 		}
@@ -167,7 +170,13 @@ class ExcelComponent extends Component {
 						$text = strtolower($condition);
 						$cellVal = strtolower($cell);
 					}
-					if (preg_match('/'.$text.'/', $cellVal)) {
+					
+					if ($conditions['regex'])
+						$search_result = preg_match('/'.$text.'/', $cellVal);
+					else
+						$search_result = (strpos($cellVal, $text));
+					
+					if ($search_result) {
 						$found[] = array("row" => $rowNum, 'col' => $colCod, 'cell' => $cell);
 						if ($type == 'first')
 							return $found;
