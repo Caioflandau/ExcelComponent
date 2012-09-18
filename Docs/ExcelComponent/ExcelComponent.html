@@ -87,6 +87,7 @@ Source Location: /Component/ExcelComponent.php<br /><br />
     <li><a href="../ExcelComponent/ExcelComponent.html#methodgetObjectForFile">getObjectForFile</a></li>
     <li><a href="../ExcelComponent/ExcelComponent.html#methodgetReader">getReader</a></li>
     <li><a href="../ExcelComponent/ExcelComponent.html#methodinitialize">initialize</a></li>
+    <li><a href="../ExcelComponent/ExcelComponent.html#methodsetActiveSheet">setActiveSheet</a></li>
     <li><a href="../ExcelComponent/ExcelComponent.html#methodsetWorkingFile">setWorkingFile</a></li>
     <li><a href="../ExcelComponent/ExcelComponent.html#methodtoDataArray">toDataArray</a></li>
     <li><a href="../ExcelComponent/ExcelComponent.html#methodunsetWorkingFile">unsetWorkingFile</a></li>
@@ -133,7 +134,7 @@ ExcelComponent is a PHPExcel wrapper for CakePHP with some helper methods.<br />
 
   <hr />
 	<a name="methodfind"></a>
-	<h3>method find <span class="smalllinenumber">[line 106]</span></h3>
+	<h3>method find <span class="smalllinenumber">[line 108]</span></h3>
 	<div class="function">
     <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
     <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
@@ -147,7 +148,8 @@ $worksheets = null])</code>
 	
 		Finds data in the file.<br /><br /><p>Looks inside cells. Similar to CakePHP's Model::find() method, but returns an array of cell coordinates in which the value was found</p><p>Find conditions: <pre>array(
 	"text" => array("some search") //What to look for (string or an array of strings). If you provide an array of strings, it will search for ANY ocurrence. Regex syntax supported.
-	"case_sensitive" => false //Should the search be case sensitive? Defaults to false (case-insensitive). If providing a regex for "text", this should always be "false".
+	"case_sensitive" => false, //Should the search be case sensitive? Defaults to false (case-insensitive). If providing a regex for "text", this should always be "false".
+ "regex" => false //Are search strings in regex syntax? Defaults to false (no regex).
 )</pre></p><br /><br /><br />
 <h4>Tags:</h4>
 <div class="tags">
@@ -184,7 +186,7 @@ $worksheets = null])</code>
   </div>
   <hr />
 	<a name="methodfindInActiveSheet"></a>
-	<h3>method findInActiveSheet <span class="smalllinenumber">[line 148]</span></h3>
+	<h3>method findInActiveSheet <span class="smalllinenumber">[line 176]</span></h3>
 	<div class="function">
     <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
     <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
@@ -230,7 +232,7 @@ $conditions)</code>
   </div>
   <hr />
 	<a name="methodgetAllSheetsAsArray"></a>
-	<h3>method getAllSheetsAsArray <span class="smalllinenumber">[line 74]</span></h3>
+	<h3>method getAllSheetsAsArray <span class="smalllinenumber">[line 75]</span></h3>
 	<div class="function">
     <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
     <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
@@ -255,7 +257,7 @@ $conditions)</code>
   </div>
   <hr />
 	<a name="methodgetObjectForFile"></a>
-	<h3>method getObjectForFile <span class="smalllinenumber">[line 62]</span></h3>
+	<h3>method getObjectForFile <span class="smalllinenumber">[line 63]</span></h3>
 	<div class="function">
     <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
     <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
@@ -291,7 +293,7 @@ $filePath)</code>
   </div>
   <hr />
 	<a name="methodgetReader"></a>
-	<h3>method getReader <span class="smalllinenumber">[line 262]</span></h3>
+	<h3>method getReader <span class="smalllinenumber">[line 290]</span></h3>
 	<div class="function">
     <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
     <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
@@ -316,7 +318,7 @@ $filePath)</code>
   </div>
   <hr />
 	<a name="methodinitialize"></a>
-	<h3>method initialize <span class="smalllinenumber">[line 29]</span></h3>
+	<h3>method initialize <span class="smalllinenumber">[line 30]</span></h3>
 	<div class="function">
     <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
     <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
@@ -351,8 +353,35 @@ $controller)</code>
         <div class="top">[ <a href="#top">Top</a> ]</div>
   </div>
   <hr />
+	<a name="methodsetActiveSheet"></a>
+	<h3>method setActiveSheet <span class="smalllinenumber">[line 140]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>void setActiveSheet(
+string|int
+$activeSheet)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+	
+		Sets the active worksheet on the currently loaded file.<br /><br /><br /><br />
+
+	
+        <h4>Parameters:</h4>
+    <div class="tags">
+    <table border="0" cellspacing="0" cellpadding="0">
+          <tr>
+        <td class="type">string|int&nbsp;&nbsp;</td>
+        <td><b>$activeSheet</b>&nbsp;&nbsp;</td>
+        <td>Sheet name or sheet index</td>
+      </tr>
+        </table>
+    </div><br />
+        <div class="top">[ <a href="#top">Top</a> ]</div>
+  </div>
+  <hr />
 	<a name="methodsetWorkingFile"></a>
-	<h3>method setWorkingFile <span class="smalllinenumber">[line 39]</span></h3>
+	<h3>method setWorkingFile <span class="smalllinenumber">[line 40]</span></h3>
 	<div class="function">
     <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
     <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
@@ -385,14 +414,14 @@ $absolute = false])</code>
   </div>
   <hr />
 	<a name="methodtoDataArray"></a>
-	<h3>method toDataArray <span class="smalllinenumber">[line 238]</span></h3>
+	<h3>method toDataArray <span class="smalllinenumber">[line 266]</span></h3>
 	<div class="function">
     <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
     <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
 		<code>array toDataArray(
 [array
 $format = array()], [string
-$range = null], [string/int
+$range = null], [string|int
 $worksheet = null])</code>
     </td></tr></table>
     </td></tr></table><br />
@@ -434,7 +463,7 @@ $worksheet = null])</code>
         <td>The range to get data from the worksheet. For example: 'A1:F10'. Defaults to entire worksheet</td>
       </tr>
           <tr>
-        <td class="type">string/int&nbsp;&nbsp;</td>
+        <td class="type">string|int&nbsp;&nbsp;</td>
         <td><b>$worksheet</b>&nbsp;&nbsp;</td>
         <td><p>Which worksheet to use (name or number). Defaults to currently active worksheet</p><p></p></td>
       </tr>
@@ -444,7 +473,7 @@ $worksheet = null])</code>
   </div>
   <hr />
 	<a name="methodunsetWorkingFile"></a>
-	<h3>method unsetWorkingFile <span class="smalllinenumber">[line 52]</span></h3>
+	<h3>method unsetWorkingFile <span class="smalllinenumber">[line 53]</span></h3>
 	<div class="function">
     <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
     <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
@@ -463,7 +492,7 @@ $worksheet = null])</code>
 
         <div class="credit">
 		    <hr />
-		    Documentation generated on Mon, 17 Sep 2012 18:36:02 -0300 by <a href="http://www.phpdoc.org">phpDocumentor 1.4.3</a>
+		    Documentation generated on Tue, 18 Sep 2012 12:14:57 -0300 by <a href="http://www.phpdoc.org">phpDocumentor 1.4.3</a>
 	      </div>
       </td></tr></table>
     </td>
