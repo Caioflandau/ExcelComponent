@@ -14,6 +14,7 @@ App::uses("ExcelException", "Lib/Error");
 class ExcelComponent extends Component {
 	const ERR_NO_FILE_LOADED = 'No file or invalid file loaded';
 	const ERR_INVALID_WORKSHEETS_ARRAY = 'Invalid worksheets array';
+	const ERR_INEXISTENT_WORKSHEET = 'Inexistent worksheet';
 	
 	private $workingFile = null;
 	
@@ -94,7 +95,8 @@ class ExcelComponent extends Component {
 	 * <pre>
 	 * array(
 	 * 	"text" => array("some search") //What to look for (string or an array of strings). If you provide an array of strings, it will search for ANY ocurrence. Regex syntax supported.
-	 * 	"case_sensitive" => false //Should the search be case sensitive? Defaults to false (case-insensitive). If providing a regex for "text", this should always be "false".
+	 * 	"case_sensitive" => false, //Should the search be case sensitive? Defaults to false (case-insensitive). If providing a regex for "text", this should always be "false".
+	 *  "regex" => false //Are search strings in regex syntax? Defaults to false (no regex).
 	 * )
 	 * </pre>
 	 * 
@@ -127,6 +129,32 @@ class ExcelComponent extends Component {
 		//Set active sheet back to what it was before find() was called
 		$this->getReader()->setActiveSheetIndex($active_sheet);
 		return $found;
+	}
+	
+	/**
+	 * Sets the active worksheet on the currently loaded file.
+	 * 
+	 * @param string|int $activeSheet Sheet name or sheet index
+	 * 
+	 * @return void
+	 */
+	public function setActiveSheet($activeSheet) {
+		if (is_int($activeSheet) || is_numeric($activeSheet)) {
+			$count = $this->getReader()->getSheetCount();
+			if ($activeSheet >= $count) {
+				throw new ExcelException(ExcelComponent::ERR_INEXISTENT_WORKSHEET);
+				return;
+			}
+			$this->getReader()->setActiveSheetIndex($activeSheet);
+		}
+		else {
+			$names = $this->getReader()->getSheetNames();
+			if (!in_array($activeSheet, $names)) {
+				throw new ExcelException(ExcelComponent::ERR_INEXISTENT_WORKSHEET);
+				return;
+			}
+			$this->getReader()->setActiveSheetIndexByName($activeSheet);
+		}
 	}
 	
 	/**
@@ -232,7 +260,7 @@ class ExcelComponent extends Component {
 	 *
 	 * @param array $format Format array defining how to convert rows and columns from the worksheet
 	 * @param string $range The range to get data from the worksheet. For example: 'A1:F10'. Defaults to entire worksheet
-	 * @param string/int $worksheet Which worksheet to use (name or number). Defaults to currently active worksheet
+	 * @param string|int $worksheet Which worksheet to use (name or number). Defaults to currently active worksheet
 	 *
 	 * @return array The data array ready to be passed to Model::save()
 	 */
